@@ -51,11 +51,12 @@
     "workbox-webpack-plugin": "^5.1.3"
   },
   "dependencies": {
-    "phaser": "^3.22.0",
     "@gamestdio/mathf": "^1.0.1",
+    "@types/lodash": "^4.14.161",
     "@types/noisejs": "^0.0.28",
     "noisejs": "^2.1.0",
     "open-simplex-noise": "^2.3.1",
+    "phaser": "^3.22.0",
     "phaser3_gui_inspector": "^1.2.1",
     "prando": "^5.1.2",
     "rxjs": "^6.6.3"

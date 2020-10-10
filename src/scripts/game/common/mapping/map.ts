@@ -1,4 +1,6 @@
 import { NoiseGenerator } from "./noise";
+import { NoiseConfig } from "./interfaces/noise-config.interface";
+import { TileMapping } from "./tilemapping";
 
 export class WorldMap {
   private _scene: Phaser.Scene;
@@ -60,16 +62,16 @@ export class WorldMap {
       height: this._mapHeight,
       tileHeight: this._tileSize,
       tileWidth: this._tileSize,
-      key: this._mapName
-    };
+      key: this._mapName,
+    } as Phaser.Types.Tilemaps.TilemapConfig;
 
     const tileMap = this._scene.make.tilemap(tileMapConfig);
-    this.layer = tileMap.createStaticLayer(0,tileMap.addTilesetImage("ground", "ground"));
+    this.layer = tileMap.createStaticLayer(0, tileMap.addTilesetImage("ground", "ground"));
     this.layer.setCollision(TileMapping.getCollisionTiles());
-
     this._scene.physics.world.setBounds(0, 0, this._mapWidth * this._tileSize, this._mapHeight * this._tileSize);
 
     this.drawDebug(tileMap);
+
 
     return tileMap;
   }
@@ -77,38 +79,34 @@ export class WorldMap {
   private drawDebug(tileMap: Phaser.Tilemaps.Tilemap) {
     const debugGraphics = this._scene.add.graphics();
 
-    // tileMap.renderDebug(debugGraphics, {
-    //   tileColor: null,//new Phaser.Display.Color(0, 0, 255, 128), // Non-colliding tiles
-    //   collidingTileColor: new Phaser.Display.Color(211, 36, 255, 128), // Colliding tiles
-    //   faceColor: new Phaser.Display.Color(211, 36, 255, 255) // Colliding face edges
-    // });
+    tileMap.renderDebug(debugGraphics, {
+      tileColor: null,//new Phaser.Display.Color(0, 0, 255, 128), // Non-colliding tiles
+      collidingTileColor: new Phaser.Display.Color(211, 36, 255, 128), // Colliding tiles
+      faceColor: new Phaser.Display.Color(211, 36, 255, 255) // Colliding face edges
+    });
 
     // tileMap.forEachTile(tile => {
-    //  this._scene.add.text(tile.x, tile.y, tile.index.toString(), { fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif',  })
+    //   this._scene.add.text(tile.x, tile.y, tile.index.toString(), { fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif', })
     // })
+
+    const grid = this._scene.add.grid(0, 0, this._mapWidth * this._tileSize, this._mapHeight * this._tileSize, this._tileSize, this._tileSize);
+    grid.setOrigin(0, 0);
+    grid.showCells = false;
+    grid.strokeColor = Phaser.Display.Color.GetColor(255, 0, 0)
+    grid.strokeAlpha = 0;
   }
 
   private transformNoiseToTileIndex(noise: Array<Array<number>>): Array<Array<number>> {
     const tileMapData: Array<Array<number>> = noise.map(x => {
       return x.map(y => {
-        return this.mapNoiseValueToTile(y);
+        return TileMapping.getTileForValue(y);
       });
     });
 
     return tileMapData;
   }
 
-  private mapNoiseValueToTile(value: number): number {
-    if (value <= 0.3) {
-      return TileMapping.getIndex("WATER");
-    } else if (value > 0.3 && value < 0.4) {
-      return TileMapping.getIndex("SAND");
-    } else if (value >= 0.4) {
-      return TileMapping.getIndex("GRASS");
-    }
-  }
-
-  public setCollision(object: Phaser.GameObjects.GameObject | Phaser.GameObjects.GameObject[] | Phaser.GameObjects.Group | Phaser.GameObjects.Group[]){
+  public setCollision(object: Phaser.GameObjects.GameObject | Phaser.GameObjects.GameObject[] | Phaser.GameObjects.Group | Phaser.GameObjects.Group[]) {
     this._scene.physics.add.collider(object, this.layer);
   }
 
@@ -119,49 +117,4 @@ export class WorldMap {
   }
 }
 
-export interface NoiseConfig {
-  seed: number;
-  scale: number;
-  octaves: number;
-  persistance: number;
-  lacunarity: number;
-  offset: Phaser.Math.Vector2;
-}
 
-export interface MapConfig extends MapDimensions {
-  tileSize: number;
-}
-
-export interface MapDimensions {
-  width: number;
-  height: number;
-}
-
-export interface TileDefinition {
-  index: number;
-  collision: boolean;
-}
-
-export interface MapTiles {
-  WATER;
-  SAND;
-  GRASS;
-}
-
-abstract class TileMapping {
-  private static tiles = new Map<keyof MapTiles, TileDefinition>([
-    ["WATER", { index: 109, collision: true }],
-    ["SAND", { index: 20, collision: false }],
-    ["GRASS", { index: 1, collision: false }]
-  ]);
-
-  static getCollisionTiles(): number[] {
-    return Array.from(this.tiles.entries())
-      .map(([key, value]) => (value.collision ? value.index : null))
-      .filter(Boolean);
-  }
-
-  static getIndex(key: keyof MapTiles): number {
-    return this.tiles.get(key).index;
-  }
-}

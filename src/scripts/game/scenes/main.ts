@@ -1,6 +1,6 @@
 import * as Phaser from "phaser";
 
-import { WorldMap } from "../common/map";
+import { WorldMap } from "../common/mapping/map";
 import { MyPlayer } from "../entities/player";
 import { Inputs } from "../common/inputs";
 import { Collectible, Type } from "../common/collectible";
@@ -19,7 +19,7 @@ const SCENE_CONFIG: Phaser.Types.Scenes.SettingsConfig = {
 };
 
 const IMAGE_ASSETS = new Map<string, string>([
-  ['ground', 'assets/images/tilesets/ground.png'],
+  ['ground', 'assets/images/tilesets/terrain.png'],
   ['tobi', 'assets/images/tobi.png'],
   ['collectibles', 'assets/images/collectables.png']
 ])
@@ -58,6 +58,7 @@ export class GameScene extends Phaser.Scene {
     this.physics.add.collider(enemyGroup, this.worldMap.layer);
     this.physics.add.collider(enemyGroup, this.player);
     this.cameras.main.setZoom(5);
+    this.cameras.main.roundPixels = true;
 
     Inputs.setControls(this);
 

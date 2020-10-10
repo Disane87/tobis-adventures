@@ -3,7 +3,7 @@ import { GameScene } from "../scenes/main";
 
 export class MyPlayer extends Spawnable {
 
-  public walkingSpeed = 100;
+  public walkingSpeed = 50;
 
   // extends Phaser.GameObjects.Sprite
   constructor(
@@ -30,6 +30,6 @@ export class MyPlayer extends Spawnable {
       scene.physics.add.collider(scene.worldMap.layer, this);
     } else {
       this.tint = 0xff00ff;
-    }  
+    }
   }
 }
