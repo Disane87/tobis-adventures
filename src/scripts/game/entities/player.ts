@@ -4,16 +4,15 @@ import { GameScene } from "../scenes/main";
 export class MyPlayer extends Spawnable {
 
   public walkingSpeed = 50;
+  public health = 100;
 
   // extends Phaser.GameObjects.Sprite
   constructor(
     scene: GameScene,
     x: number,
-    y: number,
-    textureKey: string,
-    enemy: boolean = false
+    y: number
   ) {
-    super(scene, x, y, textureKey);
+    super(scene, x, y, 'tobi');
     this.setOrigin(0, 0);
 
     //  Set some default physics properties
@@ -23,13 +22,17 @@ export class MyPlayer extends Spawnable {
 
     this.body.enable = true;
 
+    this.body.onCollide = true;
+    this.body.onOverlap = true;
+
     this.setVelocity(0);
 
-    if (!enemy) {
-      scene.cameras.main.startFollow(this);
-      scene.physics.add.collider(scene.worldMap.layer, this);
-    } else {
-      this.tint = 0xff00ff;
-    }
+    scene.cameras.main.startFollow(this);
+    scene.physics.add.collider(scene.worldMap.layer, this);
+
+  }
+
+  decreaseHealth(factor: number) {
+    this.health -= factor;
   }
 }
