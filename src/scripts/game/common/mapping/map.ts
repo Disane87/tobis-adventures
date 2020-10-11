@@ -1,6 +1,7 @@
 import { NoiseGenerator } from "./noise";
 import { NoiseConfig } from "./interfaces/noise-config.interface";
 import { TileMapping } from "./tilemapping";
+import { SCENE_CONFIG } from "../../scenes/main";
 
 export class WorldMap {
   private _scene: Phaser.Scene;
@@ -66,11 +67,13 @@ export class WorldMap {
     } as Phaser.Types.Tilemaps.TilemapConfig;
 
     const tileMap = this._scene.make.tilemap(tileMapConfig);
-    this.layer = tileMap.createStaticLayer(0, tileMap.addTilesetImage("ground", "ground"));
+    this.layer = tileMap.createStaticLayer(0, tileMap.addTilesetImage("ground", "ground", this._tileSize, this._tileSize, 1, 2));
     this.layer.setCollision(TileMapping.getCollisionTiles());
     this._scene.physics.world.setBounds(0, 0, this._mapWidth * this._tileSize, this._mapHeight * this._tileSize);
 
-    this.drawDebug(tileMap);
+    if (SCENE_CONFIG.physics.arcade.debug) {
+      this.drawDebug(tileMap);
+    }
 
 
     return tileMap;

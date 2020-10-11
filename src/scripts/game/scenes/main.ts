@@ -7,7 +7,7 @@ import { Collectible, Type } from "../common/collectible";
 import { Score } from "../ui/score";
 import { BadTobi } from "../entities/enemies/bad-tobi";
 
-const SCENE_CONFIG: Phaser.Types.Scenes.SettingsConfig = {
+export const SCENE_CONFIG: Phaser.Types.Scenes.SettingsConfig = {
   active: true,
   visible: true,
   key: "main",
@@ -20,7 +20,7 @@ const SCENE_CONFIG: Phaser.Types.Scenes.SettingsConfig = {
 };
 
 const IMAGE_ASSETS = new Map<string, string>([
-  ['ground', 'assets/images/tilesets/terrain.png'],
+  ['ground', 'assets/images/tilesets/terrain-extruded.png'],
   ['tobi', 'assets/images/tobi.png'],
   ['collectibles', 'assets/images/collectables.png']
 ])
