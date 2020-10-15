@@ -4,10 +4,10 @@ import { TileValueRange } from "./tile-value-range";
 
 export abstract class TileMapping {
     private static tiles = new Map<keyof MapTiles, TileDefinition>([
-        ["WATER", { index: 0, collision: true, range: new TileValueRange(null, 0.3) }],
-        ["SAND", { index: 1, collision: false, range: new TileValueRange(0.3, 0.4) }],
-        ["GRASS", { index: 2, collision: false, range: new TileValueRange(0.4, 0.6) }],
-        ["DIRT", { index: 3, collision: false, range: new TileValueRange(0.6) }]
+        ["WATER", { index: 16, collision: true, range: new TileValueRange(null, 0.3) }],
+        ["SAND", { index: 4, collision: false, range: new TileValueRange(0.3, 0.4) }],
+        ["GRASS", { index: 3, collision: false, range: new TileValueRange(0.4, 0.6) }],
+        ["DIRT", { index: 33, collision: false, range: new TileValueRange(0.6) }]
     ]);
 
     static getCollisionTiles(): number[] {

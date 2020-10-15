@@ -75,8 +75,69 @@ export class WorldMap {
       this.drawDebug(tileMap);
     }
 
+    const edgeTiles = this.calculateEdgeTiles(tileMap);
+
 
     return tileMap;
+  }
+
+  private calculateEdgeTiles(tileMap: Phaser.Tilemaps.Tilemap) {
+    const tileMapData = tileMap.layers[0].data;
+    const borderPositions = []
+
+    tileMapData.forEach((row, rowIndex) => {
+      row.forEach((tile, columnIndex) => {
+        if (tile.index == TileMapping.getIndex("WATER")) {
+          // if (1 == 0) {
+          const nb = this.getAllNeigborsRowsAndColumns(tile, rowIndex, columnIndex, tileMapData);
+          let borderIndex = null;
+          const tileIndex = tile.index;
+
+
+          // console.log(nb);
+
+          // if (nb.ne) borderIndex = tileIndex + 2
+          // if (nb.se) borderIndex = tileIndex + 2 + 10 + 10
+          // if (nb.nw) borderIndex = tileIndex
+          // if (nb.sw) borderIndex = tileIndex + 10 + 10
+          // if (nb.s) borderIndex = tileIndex + 1 + 10 + 10
+          // if (nb.n) borderIndex = tileIndex + 1
+          // if (nb.w) borderIndex = tileIndex + 10
+          // if (nb.e) borderIndex = tileIndex - 1
+          // if (nb.w && nb.n) borderIndex = 8
+          // if (nb.s && nb.e) borderIndex = 9
+          // if (nb.n && nb.e) borderIndex = 10
+          // if (nb.s && nb.w) borderIndex = 11
+
+          if (typeof borderIndex === 'number') {
+            borderPositions.push({ row: rowIndex, column: columnIndex, fill: borderIndex, current: tile.index })
+          }
+          // }
+
+        }
+
+      })
+    })
+    console.log(borderPositions);
+    borderPositions.forEach(({ row, column, fill }) => {
+      // console.log("Replacing index", tileMapData[row][column].index, "with", fill)
+      tileMapData[row][column].index = fill
+    })
+  }
+
+  getAllNeigborsRowsAndColumns(currentTile: Phaser.Tilemaps.Tile, row: number, column: number, areaData: Phaser.Tilemaps.Tile[][]) {
+    debugger;
+    const rowsAndColumns = {
+      n: areaData[row - 1] && areaData[row - 1][column],
+      s: areaData[row + 1] && areaData[row + 1][column],
+      w: areaData[row] && areaData[row][column - 1],
+      e: areaData[row] && areaData[row][column + 1],
+      nw: areaData[row - 1] && areaData[row - 1][column - 1],
+      ne: areaData[row - 1] && areaData[row - 1][column + 1],
+      se: areaData[row + 1] && areaData[row + 1][column + 1],
+      sw: areaData[row + 1] && areaData[row + 1][column - 1]
+    }
+    return rowsAndColumns
   }
 
   private drawDebug(tileMap: Phaser.Tilemaps.Tilemap) {

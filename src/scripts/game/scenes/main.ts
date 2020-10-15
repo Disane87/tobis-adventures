@@ -14,10 +14,14 @@ export const SCENE_CONFIG: Phaser.Types.Scenes.SettingsConfig = {
   physics: {
     default: 'arcade',
     arcade: {
-      debug: true,
+      debug: false,
     }
   },
 };
+
+const ENEMY_AND_COLLECTIBLES = false;
+const ENEMY_COUNT = 10;
+const COLLECTIBLE_COUNT = 100;
 
 const IMAGE_ASSETS = new Map<string, string>([
   ['ground', 'assets/images/tilesets/terrain-extruded.png'],
@@ -42,35 +46,32 @@ export class GameScene extends Phaser.Scene {
   public create() {
     const enemyGroup = this.add.group();
 
-    this.worldMap = new WorldMap(this, 100, 100, 16, 0);
+    this.worldMap = new WorldMap(this, 5, 5, 16, 0);
     this.player = new MyPlayer(this, 1, 1);
 
-    const collectibles = new Array<MyPlayer>(100).fill(null).map(() => new Collectible(this, 1, 1, 'collectibles', 'orange', Type.FRUIT));
+    if (ENEMY_AND_COLLECTIBLES) {
+      const collectibles = new Array<MyPlayer>(COLLECTIBLE_COUNT).fill(null).map(() => new Collectible(this, 1, 1, 'collectibles', 'orange', Type.FRUIT));
 
-    const enemies = new Array<MyPlayer>(10).fill(null).map(() => {
-      const randomX: number = Math.floor(Phaser.Math.Between(0, 100 * 16));
-      const randomY: number = Math.floor(Phaser.Math.Between(0, 100 * 16));
+      const enemies = new Array<MyPlayer>(ENEMY_COUNT).fill(null).map(() => {
+        const randomX: number = Math.floor(Phaser.Math.Between(0, 100 * 16));
+        const randomY: number = Math.floor(Phaser.Math.Between(0, 100 * 16));
 
-      return new BadTobi(this, randomX, randomY);
-    })
+        return new BadTobi(this, randomX, randomY);
+      })
 
-    enemyGroup.addMultiple(enemies);
+      enemyGroup.addMultiple(enemies);
 
-    this.physics.add.collider(enemyGroup, this.worldMap.layer);
-    this.physics.add.collider(enemyGroup, this.player);
-    this.physics.add.collider(enemyGroup, enemyGroup);
+      this.physics.add.collider(enemyGroup, this.worldMap.layer);
+      this.physics.add.collider(enemyGroup, this.player);
+      this.physics.add.collider(enemyGroup, enemyGroup);
+    }
+
     this.cameras.main.setZoom(5);
     this.cameras.main.roundPixels = true;
 
     Inputs.setControls(this);
 
-    this.anims.create({
-      key: 'water',
-      frames: this.anims.generateFrameNumbers('ground', { start: 1, end: 2 }),
-      frameRate: 10,
-    });
-
-    // PhaserGUIAction(this);aaaaa
+    // PhaserGUIAction(this);
   }
 
   addCollideWithPlayer(gameObject: Phaser.GameObjects.GameObject, callback: ArcadePhysicsCallback) {

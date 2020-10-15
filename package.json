@@ -8,7 +8,8 @@
     "start": "webpack-dev-server --config webpack/webpack.dev.js",
     "build": "webpack --config webpack/webpack.prod.js",
     "bundle": "npm run build",
-    "serve": "serve dist"
+    "serve": "serve dist",
+    "extrude-terrain": "npx tile-extruder --tileWidth 16 --tileHeight 16 --input=src/assets/images/tilesets/terrain.png --output=src/assets/images/tilesets/terrain-extruded.png"
   },
   "keywords": [
     "Phaser",
